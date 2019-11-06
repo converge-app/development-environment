@@ -1,0 +1,51 @@
+\chapter{Indledning}
+
+I dette dokument vil Converge produktets udrulning blive beskrevet. Udrulningen er handling af at udrulle et stykke software på en server et sted, så de brugere der har brug for det kan tilgå det.
+
+
+\section{Udrulnings aktiviteter}
+
+Udrulningen er inddelt i aktiviteter, som er defineret for software udrulningen. Dog er det kun nogle af disse, hvilket er brugt til Converge.
+
+\begin{itemize}
+    \item Release
+    \item Installation and Activation
+    \item Deactivation
+    \item Uninstallation
+    \item Update
+    \item Built-in Update
+    \item Version tracking
+\end{itemize}
+
+Disse aktiviteter løs oversat er, udgivelse, installation og aktivering, deaktivering, afinstallering, opdatering, indbygget opdatering og versions sporing.
+
+Hvilket relatere til det at udrulle et stykke kode, vedligeholde og opgradere det, og fjerne det igen.
+
+Til Converge er de primære aktiviteter, versions sporing, udgivelser, installering og afinstallering.
+
+De andre aktivering, deaktivering og indbygget opdatering, opdatering. Kunne implementeres som en arbejdsprocess, men har ikke givet værdi for Converge, grundet det udrulnings miljø anvendt.
+
+Disse aktiviteter er beskrevet som led af et DevOps udviklings og udgivelses miljø. Hvor i Converge er sammenhængen.
+
+\begin{table}[H]
+    \begin{small}
+        \caption{DevOps relations}
+        \label{tab:devops-relation}
+        \begin{center}
+            \begin{tabular}[c]{l|l}
+                \multicolumn{1}{c|}{\textbf{Abstraktion}} & 
+                \multicolumn{1}{c}{\textbf{DevOps anvendelse}} \\
+                \hline
+                Release & b \\
+                Installation & d \\
+                Activation & d \\
+                Deactivation & d \\
+                Uninstallation & d \\
+                Update & d \\
+                Built-in Update & d \\
+                Version tracking & d \\
+                
+            \end{tabular}
+        \end{center}
+    \end{small}
+\end{table}

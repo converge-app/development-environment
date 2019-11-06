@@ -1,1 +1,96 @@
 \chapter{Indledning}
+
+I dette dokument vil Converge produktets udrulning blive beskrevet. Udrulningen er handling af at udrulle et stykke software på en server et sted, så de brugere der har brug for det kan tilgå det.
+
+
+\section{Udrulnings aktiviteter}
+
+Udrulningen er inddelt i aktiviteter, som er defineret for software udrulningen. Dog er det kun nogle af disse, hvilket er brugt til Converge.
+
+\begin{itemize}
+    \item Release
+    \item Installation and Activation
+    \item Deactivation
+    \item Uninstallation
+    \item Update
+    \item Built-in Update
+    \item Version tracking
+\end{itemize}
+
+Disse aktiviteter løs oversat er, udgivelse, installation og aktivering, deaktivering, afinstallering, opdatering, indbygget opdatering og versions sporing.
+
+Hvilket relatere til det at udrulle et stykke kode, vedligeholde og opgradere det, og fjerne det igen.
+
+Til Converge er de primære aktiviteter, versions sporing, udgivelser, installering og afinstallering.
+
+De andre aktivering, deaktivering og indbygget opdatering, opdatering. Kunne implementeres som en arbejdsprocess, men har ikke givet værdi for Converge, grundet det udrulnings miljø anvendt.
+
+Disse aktiviteter er beskrevet som led af et DevOps ~\cite{documentation_terms} udviklings og udgivelses miljø. Hvor i Converge er sammenhængen.
+
+\begin{table}[H]
+    \begin{small}
+        \caption{DevOps relations}
+        \label{tab:devops-relation}
+        \begin{center}
+            \begin{tabular}[c]{l|l}
+                \multicolumn{1}{c|}{\textbf{Aktiviteter}} & 
+                \multicolumn{1}{c}{\textbf{DevOps anvendelse}} \\
+                \hline
+                Release & git commit (version control GitOps) \\
+                Installation & Helm \\
+                Activation & Kubernetes feature flags  (GitLab) \& GitOps \\
+                Deactivation & Kubernetes feature flags (GitLab) \& GitOps \\
+                Uninstallation & Helm\\
+                Update & Kubernetes / Docker ~\cite{documentation_terms}\\
+                Built-in Update & NextJs / React \\
+                Version tracking & Git \\
+            \end{tabular}
+        \end{center}
+    \end{small}
+\end{table}
+
+Tabel ~\ref{tab:devops-relation}~\cite{documentation_terms} viser Converge miljø i forhold til disse aktiviteter. Det skal dog siges at disse aktiviteter ikke kun er til anvendelse, men også mere blødt som en arbejdsprocess, udført af Converge teamet. Det er her DevOps kommer ind i billedet, som ved agil udvikling gør at dette kan gøres nemmere, og automatistere så meget af processen som muligt.
+
+Til release er der brugt git, eller nærmere continuous delivery. Når en udvikler skubber noget kode til git master (release branch) så vil koden blive bygget af en GitLab pipeline og udgivet med Helm og installeret på et Kubernetes cluster hostet hos Google. Derefter kan koden blive aktiveret direkte i GitLab, så koden kan blive installeret med det samme, men først ramme en brøkdel af slutbrugerne, for at kvalitetes sikre produktet. Det meste af denne opstilling er gemt i Git, det eneste undladt er feature flags \fxfatal{ref feature flags} og secrets, som privat nøgler osv.
+
+Hver sektion vil blive beskrevet med tekst og diagrammer relaterende til Converge begreber og anvendelser.
+
+\section{Udgivelse}
+
+Til en udgivelse kræves der nogle ting. Til at forbedrede en release, ville man tidligere skulle allokere servere og installere biblioteker så man kunne udrulle det specifikke produkt på et givet tidspunkt. Converge bruger Docker, Helm, Kubernetes og Google Kubernetes Engine (GKE) til at automatisere dette.
+
+Med Docker kan en udgivelse pakkes (et image) og med Helm pakken blive udrullet (som et helm chart). Kubernetes kan allokere en plads på en af dens servere til pakken og køre dette (som en pod), via docker runtime (som en container).
+
+I det tilfælde af at der ikke er kapacitet nok til en ny applikation. Vil kubernetes alarmere om en uacceptabel kapacitet, og med GKE vil der blive allokeret en ny node til Kubernetes. Disse noder er servere hostet hos Google og er som alt andet en kubernetes resource.
+
+Under alle stadier af denne udgivelse kan der fejles, enten pga. noget internt, eller eksternt, som eksempel, fejl i koden, en forkert version af et bibliotek. Eller eksternt, som et strømsvigt eller tabte pakker på netværket. Med det software anvendt Helm og Kubernetes, vil en udgivelse aldrig røre kunder hvis den ikke har bestået nogle tests og derfor kan system vedligeholde sig selv, så der skal bruges så lidt manskab som muligt.
+
+Til at illustrere dette er der anvendt et diagram over udgivelses processen.
+
+\begin{figure}[H]
+    \begin{small}
+        \begin{center}
+            \includegraphics[width=0.35\textwidth]{deployment/release/release-overview/release-overview.pdf}
+        \end{center}
+        \caption{Oversigt over udgivelse}
+        \label{fig:release-overview}
+    \end{small}
+\end{figure}
+
+Som beskrevet med figur~\ref{fig:release-overview} kan det bemærkes at det beskrevet laver en release og ruller den ud på kubernetes i produktions miljøet. Dog er det ikke beskrevet om den ændring er slået til eller ej, det er beskrevet i aktivering, og selve det at få kode i master branch er beskrevet i ~\cite{documentation_development} \fxfatal{Add pages to documentation development} under Git og Continuous Integration ~\cite{documentation_terms}.
+
+\section{Installation}
+
+Når en ny udgivelse skal installeres, skal den gamle afinstalleres og den nye skal erstatte den tidligere version. Til at håndtere dette bruges der to produkter. Helm og Kubernetes.
+
+Helm holder styr på hvilken version der kører på Kubernetes, og kubernetes kan bruge resourcer som et deployment, til at lave en sikker installation.
+
+Selve installation er pakket som et image med Docker. et Docker image indeholder alt det et program skal bruge for at køre, normalt er det dele af et linux miljø, med biblioteker og runtimes krævet for at et program kan køre, derefter indeholder det nogle instruktioner for hvordan et program skal køre og programmet(erne) selv, om det er en binær fil eller scripts.
+
+Helm kan pakke kubernetes resourcer til et chart ~\cite[Chart]{helm_chart}, samtidig med at det kan styre udrulningen, så man eventuelt kan rulle tilbage til en tidligere version.
+
+Under hver service findes der en mappe charts hvilket indeholder disse resourcer. Når enten en bruger eller GitLab pipeline bruger helm til at upgradere et chart på kubernetes, så vil Kubernetes begynde at udrulle de nye resourcer. Kubernetes gør først det at den ser på forskellen på de tidligere resourcer mod de nye, hvis der er en forskel, så vil den lave nye, ellers vil den lade dem være. Dette er specielt nyttigt når en resource kalde Deployment er brugt. Den meget velnavngivet resource hedder deployment, fordi den kan forstå at udrulle applikationer efter en hvis taktik, skal den udrulle en efter en, eller alle på en gang. Dette er muligt med deployments.
+
+Converge har opsat det sådan at for hver replikation af en pod, vil deployment først lave en ny pod efter de nye specifikationer. Efter det er der brugt et readiness check, som pinger programmet for at høre om det er i live, hvis det er i live, bliver den såkaldte pod koblet til internettet og den eksisterende pod bliver fjernet. Dette gør at der ikke bliver lukket op for applikationer der ikke kan køre.
+
+Tilhørende de fleste ~\cite[Docker]{documentation_terms}
