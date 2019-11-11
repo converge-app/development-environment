@@ -1,96 +1,78 @@
 \chapter{Indledning}
 
-I dette dokument vil Converge produktets udrulning blive beskrevet. Udrulningen er handling af at udrulle et stykke software på en server et sted, så de brugere der har brug for det kan tilgå det.
+Dette dokument vil beskrive udviklingsmiljøet brugt til udviklig af Converge-app. Dette er inddelt til de forskellige roller: Udvikler, Administrator og Supporter.
 
+Dokumentet vil beskrive hvordan det mindst mulige udviklingsmiljø kan blive sat op.
 
-\section{Udrulnings aktiviteter}
+\section{Udvikler}
 
-Udrulningen er inddelt i aktiviteter, som er defineret for software udrulningen. Dog er det kun nogle af disse, hvilket er brugt til Converge.
+Udvikleren har primært brug for et sted at skrive kode, indlevere det samt at få det til at køre i produktion.
+
+Derfor har udvikleren brug for værktøjer til dette formål.
+
+\subsubsection{IDE}
+
+IDE står for integrated development environment, og skal komme med alt det en udvikler har brug for at skrive det kode ønsket. Til converge er der dog mest brugt en Text Editor i form af Visual Studio Code (VSCode). VSCode er en editor af Microsoft, der tager inspiration fra mange andre tidligere editors, såsom Sublime, Atom og Microsofts egen Visual Studio.
+
+VSCode er cross-platform og er nemt at sætte op. For at skrive kode til Converge skal der dog bruges nogle extensions til VSCode.
 
 \begin{itemize}
-    \item Release
-    \item Installation and Activation
-    \item Deactivation
-    \item Uninstallation
-    \item Update
-    \item Built-in Update
-    \item Version tracking
+    \item ES7 React/Redux
+    \item C#
+    \item Kubernetes
+    \item Docker
+    \item Git
+    \item GitLens
+    \item LaTeX Workshop
+    \item PlantUML
 \end{itemize}
 
-Disse aktiviteter løs oversat er, udgivelse, installation og aktivering, deaktivering, afinstallering, opdatering, indbygget opdatering og versions sporing.
+Det er dog ikke alle værktøjer som alle udviklere får brug for, f.eks. Hvis en udvikler kun skal arbejde med Converge-spa, ville det være nok at have ES7 React/Redux og Git. Men til en Fullstack udvikler, kræver det alle værktøjer.
 
-Hvilket relatere til det at udrulle et stykke kode, vedligeholde og opgradere det, og fjerne det igen.
+\subsubsection{CLI værktøjer}
 
-Til Converge er de primære aktiviteter, versions sporing, udgivelser, installering og afinstallering.
+Til at administrere Udrulningen af appen er der brug for værktøjer til henholdsvis Docker, Google og Kubernetes.
 
-De andre aktivering, deaktivering og indbygget opdatering, opdatering. Kunne implementeres som en arbejdsprocess, men har ikke givet værdi for Converge, grundet det udrulnings miljø anvendt.
+Dette er i form af:
 
-Disse aktiviteter er beskrevet som led af et DevOps ~\cite{documentation_terms} udviklings og udgivelses miljø. Hvor i Converge er sammenhængen.
+\begin{itemize}
+    \item Docker (#docker)
+    \item Google SDK (#gcloud)
+    \item Kubernetes (#kubectl)
+    \item Helm (#helm)
+    \item Dotnet SDK
+    \item git
+    \item NodeJS
+    \item Optional
+    \begin{itemize}
+        \item Minikube
+    \end{itemize}
+\end{itemize}
 
-\begin{table}[H]
-    \begin{small}
-        \caption{DevOps relations}
-        \label{tab:devops-relation}
-        \begin{center}
-            \begin{tabular}[c]{l|l}
-                \multicolumn{1}{c|}{\textbf{Aktiviteter}} & 
-                \multicolumn{1}{c}{\textbf{DevOps anvendelse}} \\
-                \hline
-                Release & git commit (version control GitOps) \\
-                Installation & Helm \\
-                Activation & Kubernetes feature flags  (GitLab) \& GitOps \\
-                Deactivation & Kubernetes feature flags (GitLab) \& GitOps \\
-                Uninstallation & Helm\\
-                Update & Kubernetes / Docker ~\cite{documentation_terms}\\
-                Built-in Update & NextJs / React \\
-                Version tracking & Git \\
-            \end{tabular}
-        \end{center}
-    \end{small}
-\end{table}
+Docker bruges til at teste pakningen af applikationer. Google SDK til at vedligeholde alle de hostede google resourcer, (Cloud DNS, Google Kubernetes Engine osv.) Kontakt converge.kjuulh@gmail.com for adgang til resourcer. Kubernetes til at debugge og styre udrulningen af applikationer på produktions cluster, og til Udvikling på Minikube hvis downloaded). Derefter kan helm downloades, dette er ikke et krav, men er rart for at kunne styre udrulningen af applikationer, samt bedre værktøjer til at lave nye charts til kubernetes. Dotnet SDK bruges til at lave nye projekter, men mere for at kunne køre server kode. Dette er et krav, hvis altså Visual Studio 2017/2019 ikke er downloaded. Git, git er et krav, da git er påkrævet for at samarbejde om koden, og til at kunne levere kode til produktion. NodeJS er brugt til udviklingen af Converge-spa og er påkrævet for at kunne køre hjemmesiden i udviklingsmiljøet. Minikube kan downloades og køres, dette kræver at man har en del andre applikationer installere, men giver muligheden for at have et lokalt kubernetes cluster.
 
-Tabel ~\ref{tab:devops-relation}~\cite{documentation_terms} viser Converge miljø i forhold til disse aktiviteter. Det skal dog siges at disse aktiviteter ikke kun er til anvendelse, men også mere blødt som en arbejdsprocess, udført af Converge teamet. Det er her DevOps kommer ind i billedet, som ved agil udvikling gør at dette kan gøres nemmere, og automatistere så meget af processen som muligt.
+\subsubsection{Tracing}
 
-Til release er der brugt git, eller nærmere continuous delivery. Når en udvikler skubber noget kode til git master (release branch) så vil koden blive bygget af en GitLab pipeline og udgivet med Helm og installeret på et Kubernetes cluster hostet hos Google. Derefter kan koden blive aktiveret direkte i GitLab, så koden kan blive installeret med det samme, men først ramme en brøkdel af slutbrugerne, for at kvalitetes sikre produktet. Det meste af denne opstilling er gemt i Git, det eneste undladt er feature flags \fxfatal{ref feature flags} og secrets, som privat nøgler osv.
+Sporing (Tracing) i produktion er et af de udskrevne krav for at køre en decentral microservices arkitektur. Sporing giver muligheden for at binde applikationer sammen, som ikke køre i samme process, samt at kunne se hvad de individuelle brugere gør, og hvordan og hvornår fejl opstår. Tracing giver et overblik over applikationen, som man normalt ellers ikke ville have.
 
-Hver sektion vil blive beskrevet med tekst og diagrammer relaterende til Converge begreber og anvendelser.
+Tracing er givet ved en kobling af de forskellige server applikationer, kørende dotnet samt Jaeger (OpenTracing standard). Jaeger gemmer sine spor (Traces/Frames) i Elastic search og tilbyder et web interface hvor de forskellige koblinger og kald kan blive hentet.
 
-\section{Udgivelse}
+\fxfatal{Jaeger link}
 
-Til en udgivelse kræves der nogle ting. Til at forbedrede en release, ville man tidligere skulle allokere servere og installere biblioteker så man kunne udrulle det specifikke produkt på et givet tidspunkt. Converge bruger Docker, Helm, Kubernetes og Google Kubernetes Engine (GKE) til at automatisere dette.
+\subsubsection{Logning}
 
-Med Docker kan en udgivelse pakkes (et image) og med Helm pakken blive udrullet (som et helm chart). Kubernetes kan allokere en plads på en af dens servere til pakken og køre dette (som en pod), via docker runtime (som en container).
+Logning er lige så vigtigt som Sporing, men meget mere granulært i dets brug. Man kunne sige at logning kunne det samme som tracing, men logning er sværre at bruge, men er også beregnet til andre formål. Logning er brugt til at holde styr på forskellige statistikker såsom fejl pr time, antal brugere pr dag, antal api kald pr applikation, de mest belastede applikationer osv. 
 
-I det tilfælde af at der ikke er kapacitet nok til en ny applikation. Vil kubernetes alarmere om en uacceptabel kapacitet, og med GKE vil der blive allokeret en ny node til Kubernetes. Disse noder er servere hostet hos Google og er som alt andet en kubernetes resource.
+Logning er givet ved en kobling af de forskellige server applikationer, kørende dotnet, samt ELK stack (Elastic search, logstash og Kibana), hvor EK er brugt mest. Dotnet interagere med Elastic search, og Kibana tilbyder et interface til Elastic search. Med Kibana kan queries samles og grafer kan defineres, så Ops personale kan holde overblik over systemets helbred.
 
-Under alle stadier af denne udgivelse kan der fejles, enten pga. noget internt, eller eksternt, som eksempel, fejl i koden, en forkert version af et bibliotek. Eller eksternt, som et strømsvigt eller tabte pakker på netværket. Med det software anvendt Helm og Kubernetes, vil en udgivelse aldrig røre kunder hvis den ikke har bestået nogle tests og derfor kan system vedligeholde sig selv, så der skal bruges så lidt manskab som muligt.
+\fxfatal{ELK link}
 
-Til at illustrere dette er der anvendt et diagram over udgivelses processen.
+\subsubsection{Monitoring}
 
-\begin{figure}[H]
-    \begin{small}
-        \begin{center}
-            \includegraphics[width=0.35\textwidth]{deployment/release/release-overview/release-overview.pdf}
-        \end{center}
-        \caption{Oversigt over udgivelse}
-        \label{fig:release-overview}
-    \end{small}
-\end{figure}
+Monitoring er vigtigt for at holde overblik over hvor mange og hvor godt helbred ens appliktioner har det. Kubernetes er et selv helene system, men det er svært at holde styr på hvilke applikationer der køre hvor, og hvor godt helbred de har. Prometheus er brugt til dette. Prometheus kan skrabe forskellige endpoints udstedt af Kubernetes selv, og de applikationer kørende i kubernetes. Prometheus kan derefter levere dette videre til et utal af interfaces. Indkluderende dets eget.
 
-Som beskrevet med figur~\ref{fig:release-overview} kan det bemærkes at det beskrevet laver en release og ruller den ud på kubernetes i produktions miljøet. Dog er det ikke beskrevet om den ændring er slået til eller ej, det er beskrevet i aktivering, og selve det at få kode i master branch er beskrevet i ~\cite{documentation_development} \fxfatal{Add pages to documentation development} under Git og Continuous Integration ~\cite{documentation_terms}.
+\fxfatal{Prometheus link}
 
-\section{Installation}
+\subsubsection{GitHub \& Feature Branching}
 
-Når en ny udgivelse skal installeres, skal den gamle afinstalleres og den nye skal erstatte den tidligere version. Til at håndtere dette bruges der to produkter. Helm og Kubernetes.
-
-Helm holder styr på hvilken version der kører på Kubernetes, og kubernetes kan bruge resourcer som et deployment, til at lave en sikker installation.
-
-Selve installation er pakket som et image med Docker. et Docker image indeholder alt det et program skal bruge for at køre, normalt er det dele af et linux miljø, med biblioteker og runtimes krævet for at et program kan køre, derefter indeholder det nogle instruktioner for hvordan et program skal køre og programmet(erne) selv, om det er en binær fil eller scripts.
-
-Helm kan pakke kubernetes resourcer til et chart ~\cite[Chart]{helm_chart}, samtidig med at det kan styre udrulningen, så man eventuelt kan rulle tilbage til en tidligere version.
-
-Under hver service findes der en mappe charts hvilket indeholder disse resourcer. Når enten en bruger eller GitLab pipeline bruger helm til at upgradere et chart på kubernetes, så vil Kubernetes begynde at udrulle de nye resourcer. Kubernetes gør først det at den ser på forskellen på de tidligere resourcer mod de nye, hvis der er en forskel, så vil den lave nye, ellers vil den lade dem være. Dette er specielt nyttigt når en resource kalde Deployment er brugt. Den meget velnavngivet resource hedder deployment, fordi den kan forstå at udrulle applikationer efter en hvis taktik, skal den udrulle en efter en, eller alle på en gang. Dette er muligt med deployments.
-
-Converge har opsat det sådan at for hver replikation af en pod, vil deployment først lave en ny pod efter de nye specifikationer. Efter det er der brugt et readiness check, som pinger programmet for at høre om det er i live, hvis det er i live, bliver den såkaldte pod koblet til internettet og den eksisterende pod bliver fjernet. Dette gør at der ikke bliver lukket op for applikationer der ikke kan køre.
-
-Tilhørende de fleste ~\cite[Docker]{documentation_terms}
+Til at hoste Converge kode er GitHub brugt, både som Repository manager, og til administrering af feature requests og bugs. Til alt kode er feature branching brugt. Ved feature branching laves en branch til noget kode, derefter er det kode reviewet i et pull request og merged ind i master, hvorefter det er udrullet i produktion. Dette betyder der bliver kørt unit tests, systemtests og accepttest, både før og efter applikationen er udrullet til produktion. Feature branching og GitHub gør det muligt at kræve et kode review, så der kommer flere øjne på det kode der eventuelt skal eller ikke skal i produktion. Dette er også kaldt Continuous Integration \fxfatal{CI}, da kode kontinuert blive updateret fra produktion mod produktion.
