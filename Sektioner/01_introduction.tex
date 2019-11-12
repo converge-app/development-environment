@@ -76,3 +76,52 @@ Monitoring er vigtigt for at holde overblik over hvor mange og hvor godt helbred
 \subsubsection{GitHub \& Feature Branching}
 
 Til at hoste Converge kode er GitHub brugt, både som Repository manager, og til administrering af feature requests og bugs. Til alt kode er feature branching brugt. Ved feature branching laves en branch til noget kode, derefter er det kode reviewet i et pull request og merged ind i master, hvorefter det er udrullet i produktion. Dette betyder der bliver kørt unit tests, systemtests og accepttest, både før og efter applikationen er udrullet til produktion. Feature branching og GitHub gør det muligt at kræve et kode review, så der kommer flere øjne på det kode der eventuelt skal eller ikke skal i produktion. Dette er også kaldt Continuous Integration \fxfatal{CI}, da kode kontinuert blive updateret fra produktion mod produktion.
+
+\section{Administrator}
+
+Som administrator er der brug for en række værktøjer. Både til at rette problemer med brugere og til at købe nye servere, eller spore et problem for supportere etc.
+
+Som en administrator, er der brug for mange af de samme værktøjer som ved en udvikler, men også mere grundigt nogle flere som:
+
+Google Admin Konto, adgang til forretnings email og database opslagsværktøjer.
+
+Som beskrevet tidligere kan man ved at kontakte converge.kjuulh@gmail.com få adgang til google kontoen, converge.kjuulh@gmail.com er en admin konto i sig selv, og administreret af teamets administrator Kasper Juul Hermansen. Denne rolle er f.eks. at sætte de forskellige værktøjer op og vedligeholde dem. Dette rækker også ind over udvikler feltet, og kan kaldes DevOps, Developer & Operations. Hvilket betyder at en person laver flere ting samtidigt, samtidig med at være fungerende udvikler har denne person også ansvar for ikke udvikler ting, som vedligeholdelse og oprettelse af CI/CD pipelines.
+
+\subsubsection{Kubernetes}
+
+Med adgang til Google Console (gcloud) er det muligt med en administrator konto at oprette, vedligeholde og nedlægge resourcer for Converge produktet. Dette er administratorens job, og converge-clusterets helbred afhænger af administratorens
+
+\subsubsection{Cloud DNS}
+
+Google Cloud DNS er en google resourcer som fungere som en Domain Name Server for converge-app.net domænet. Dvs, at når man kalder det påglædende domæne app.converge-app.net, så er det Cloud DNS der kan route fra domænet til en ip addresse. Det er dog vigtigt at forstå at Cloud DNS kun bruges som en DNS og ikke som Registrar (der hvor domænenavnet kommer fra). Det er administratoren der holder styr på Cloud DNS og konfigurere det til dets brug.
+
+Cloud DNS har to indgange, et som er for kubernetes clusteret, og et andet for den hjemmeside som bliver udstedt af Zeit Now (bliver beskrevet i sektionen Zeit Now).
+
+\begin{itemize}
+    \item Rule: *.api.converge-app.net -> converge-cluster
+    \item Rule: app.converge-app.net -> Zeit Now
+\end{itemize}
+
+Denne opstilling gør det muligt at Converge clusteret selv kan lave subdomæner til de forskellige services, så henholdsvist users-service får et logisk domæne users-service.api.converge-app.net. Dette er konfiguret ved hjælp af Traefik (udtales Træfik) som vil blive beskrevet i sektionen Traefik.
+
+\subsubsection{Traefik}
+
+Traefik er en edge router, som sidder i den yderste skal af converge-clusteret, den fungere som ingress og diregrere alle indgående kald til deres respektive service. Traefik er en service der selv er hostet i kubernetes og bliver peget på af Cloud DNS. Traefik er tilgængeligt på converge-app.net og dets tilhørende dashboard på traefik.converge-app.net. Traefik fungere ved at koble sig på kubernetes selv, og derved automatisk finde alle de tilkoblede services. Traefik henter selv certifikater fra LetsEncrypt og udsteder HTTPS ved at koble sig på Namecheap, hvilket er den registrar brugt til converge-app.net.
+
+\subsubsection{Zeit Now}
+
+Zeit Now er det deployment mekanisme brugt til at hoste Converge SPA. Converge SPA er skrevet i Zeit NextJS, hvilket tilbyder serverside rendering, dette er ideelt for en produktions hjemmeside, som skal vises på henholdsvist google. Det er administratorens job at holde styr på at Zeit Now er oppe, og dets serverless funktioner fungere optimal, og hvis ikke kontakte en udvikler til at fikse det.
+
+\subsubsection{ZenHub/GitHub}
+
+En administrator har også som opgave at oprette problemer relateret til de kørende programmer på GitHub som issues, eller tasks på ZenHub, begge ender ud i det samme.
+
+\subsubsection{Namecheap}
+
+Namecheap er den registrar brugt af Converge og bruges kun som registrar, dets nameserver er sat til Googles Cloud DNS, så administratoren kan administrere hjemmesiden i Cloud DNS selv.
+
+\section{Supporter}
+
+Supporteren, bruger ikke ret mange værktøjer, og bruger primært interne værktøjer defineret specifikt til Converge. Disse værktøjer eksistere ikke endnu, efter Converge-teamet ikke har en fungerede bruger base endnu. Men Supporteren vil modtage tickets, anmodninger, spørgsmål holde en hotline osv. for Converge projektet. Supporteren er first line of defense, og er som regel den kontakt de forskellige brugere har, hvis de har problemer. I anden række ville de være Administrator på L2, og til sidst en udvikler på L3.
+
+Ellers bruger Supporter ZenHub til at holde styr på opgaver, og oprette issues på problemer beskrevet af brugeren.
