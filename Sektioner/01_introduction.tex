@@ -2,7 +2,7 @@
 
 Dette dokument vil beskrive udviklingsmiljøet brugt til udviklig af Converge-app. Dette er inddelt til de forskellige roller: Udvikler, Administrator og Supporter.
 
-Dokumentet vil beskrive hvordan det mindst mulige udviklingsmiljø kan blive sat op.
+Dokumentet vil beskrive hvordan det mindst mulige udviklingsmiljø kan blive sat op. Se bla. diverse termer i termlisten.
 
 \section{Udvikler}
 
@@ -18,7 +18,7 @@ VSCode er cross-platform og er nemt at sætte op. For at skrive kode til Converg
 
 \begin{itemize}
     \item ES7 React/Redux
-    \item C#
+    \item C\#
     \item Kubernetes
     \item Docker
     \item Git
@@ -36,10 +36,10 @@ Til at administrere Udrulningen af appen er der brug for værktøjer til henhold
 Dette er i form af:
 
 \begin{itemize}
-    \item Docker (#docker)
-    \item Google SDK (#gcloud)
-    \item Kubernetes (#kubectl)
-    \item Helm (#helm)
+    \item Docker (\#docker)
+    \item Google SDK (\#gcloud)
+    \item Kubernetes (\#kubectl)
+    \item Helm (\#helm)
     \item Dotnet SDK
     \item git
     \item NodeJS
@@ -57,7 +57,7 @@ Sporing (Tracing) i produktion er et af de udskrevne krav for at køre en decent
 
 Tracing er givet ved en kobling af de forskellige server applikationer, kørende dotnet samt Jaeger (OpenTracing standard). Jaeger gemmer sine spor (Traces/Frames) i Elastic search og tilbyder et web interface hvor de forskellige koblinger og kald kan blive hentet.
 
-\fxfatal{Jaeger link}
+\cite{documentation_terms}
 
 \subsubsection{Logning}
 
@@ -65,13 +65,13 @@ Logning er lige så vigtigt som Sporing, men meget mere granulært i dets brug. 
 
 Logning er givet ved en kobling af de forskellige server applikationer, kørende dotnet, samt ELK stack (Elastic search, logstash og Kibana), hvor EK er brugt mest. Dotnet interagere med Elastic search, og Kibana tilbyder et interface til Elastic search. Med Kibana kan queries samles og grafer kan defineres, så Ops personale kan holde overblik over systemets helbred.
 
-\fxfatal{ELK link}
+\cite{documentation_terms}
 
 \subsubsection{Monitoring}
 
 Monitoring er vigtigt for at holde overblik over hvor mange og hvor godt helbred ens appliktioner har det. Kubernetes er et selv helene system, men det er svært at holde styr på hvilke applikationer der køre hvor, og hvor godt helbred de har. Prometheus er brugt til dette. Prometheus kan skrabe forskellige endpoints udstedt af Kubernetes selv, og de applikationer kørende i kubernetes. Prometheus kan derefter levere dette videre til et utal af interfaces. Indkluderende dets eget.
 
-\fxfatal{Prometheus link}
+\cite{documentation_terms}
 
 \subsubsection{GitHub \& Feature Branching}
 
@@ -85,7 +85,7 @@ Som en administrator, er der brug for mange af de samme værktøjer som ved en u
 
 Google Admin Konto, adgang til forretnings email og database opslagsværktøjer.
 
-Som beskrevet tidligere kan man ved at kontakte converge.kjuulh@gmail.com få adgang til google kontoen, converge.kjuulh@gmail.com er en admin konto i sig selv, og administreret af teamets administrator Kasper Juul Hermansen. Denne rolle er f.eks. at sætte de forskellige værktøjer op og vedligeholde dem. Dette rækker også ind over udvikler feltet, og kan kaldes DevOps, Developer & Operations. Hvilket betyder at en person laver flere ting samtidigt, samtidig med at være fungerende udvikler har denne person også ansvar for ikke udvikler ting, som vedligeholdelse og oprettelse af CI/CD pipelines.
+Som beskrevet tidligere kan man ved at kontakte converge.kjuulh@gmail.com få adgang til google kontoen, converge.kjuulh@gmail.com er en admin konto i sig selv, og administreret af teamets administrator Kasper Juul Hermansen. Denne rolle er f.eks. at sætte de forskellige værktøjer op og vedligeholde dem. Dette rækker også ind over udvikler feltet, og kan kaldes DevOps, Developer \& Operations. Hvilket betyder at en person laver flere ting samtidigt, samtidig med at være fungerende udvikler har denne person også ansvar for ikke udvikler ting, som vedligeholdelse og oprettelse af CI/CD pipelines.
 
 \subsubsection{Kubernetes}
 
